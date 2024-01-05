@@ -1,17 +1,13 @@
-use std::io::{stderr, stdout, Result};
+use std::io::{stderr, Result};
 
-use chrono::{Local, Utc};
+
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, KeyCode, KeyEventKind},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-    ExecutableCommand,
 };
 use ratatui::{
-    backend::{Backend, CrosstermBackend},
-    style::Stylize,
-    widgets::Paragraph,
-    Frame, Terminal,
+    backend::{Backend, CrosstermBackend}, Terminal,
 };
 
 mod app;
