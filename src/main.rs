@@ -1,5 +1,7 @@
-use std::io::{stderr, Result};
-
+use std::{
+    collections::HashMap,
+    io::{stderr, Result},
+};
 
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, KeyCode, KeyEventKind},
@@ -7,13 +9,16 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use ratatui::{
-    backend::{Backend, CrosstermBackend}, Terminal,
+    backend::{Backend, CrosstermBackend},
+    Terminal,
 };
 
 mod app;
 mod ui;
 use app::{App, CurrentScreen, CurrentlyEditing};
 use ui::ui;
+
+use serde_json::Value;
 fn main() -> Result<()> {
     enable_raw_mode()?;
 
@@ -24,6 +29,29 @@ fn main() -> Result<()> {
     terminal.clear()?;
 
     let mut app = App::new();
+
+    let file = std::fs::File::open("./db.json").expect("file not found");
+
+    let rs = std::io::read_to_string(file).expect("not a string");
+
+    // let mut hashmap: HashMap<String, String> = HashMap::new();
+
+    // 将 JSON 字符串数组解析为 serde_json::Value
+    let hashmap: HashMap<String, String> = serde_json::from_str(&rs)?;
+
+    // 遍历解析后的 JSON 数组
+    // for json_obj in parsed {
+    //     // 对每个 JSON 对象执行操作
+    //     if let Value::Object(map) = json_obj {
+    //         for (key, value) in map {
+    //             if let Value::String(v) = value {
+    //                 // 将 key-value 对插入 HashMap
+    //                 hashmap.insert(key, v);
+    //             }
+    //         }
+    //     }
+    // }
+    app.pairs = hashmap;
     let res = run_app(&mut terminal, &mut app);
     disable_raw_mode()?;
 

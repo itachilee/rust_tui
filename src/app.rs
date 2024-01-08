@@ -1,5 +1,7 @@
 use std::collections::HashMap;
-use std::io::Result;
+use std::io::{Result, Write};
+
+use std::fs::{File, OpenOptions};
 pub enum CurrentScreen {
     Main,
     Editing,
@@ -38,6 +40,18 @@ impl App {
         self.key_input = String::new();
         self.value_input = String::new();
         self.currently_editing = None;
+        self.save_file().expect("msg");
+    }
+    // --snip--
+
+    pub fn save_file(&self) -> Result<bool> {
+        let mut file = OpenOptions::new()
+            // .append(true)
+            .open("./db.json")
+            .expect("failed to open");
+        let json_string = serde_json::to_string(&self.pairs)?;
+        file.write_all(json_string.as_bytes())?;
+        Ok(true)
     }
 
     // --snip--
